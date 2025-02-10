@@ -52,9 +52,11 @@
 
 <script setup>
 import { ref } from "vue";
-import { useRouter } from "vue-router";
+import router from '../router.js';
 
-const router = useRouter();
+import axiosClient from '../axios';
+
+
 const isOpen = ref(false);
 
 // Toggle mobile menu
@@ -64,8 +66,24 @@ const toggleMenu = () => {
 
 // Dummy logout function
 const logout = () => {
-  alert("Logged out!");
-  toggleMenu();
-  router.push("/login");
+  axiosClient.get('/sanctum/csrf-cookie').then(() => {
+        axiosClient.post('/logout').then(response => {
+            alert("Logged out!");
+            toggleMenu();
+            router.push({name: "Login"});
+        }).catch(error => {
+            // Handle login error here
+            console.error("Login failed:", error);
+            alert("Login out. Please check your credentials and try again.");
+        });
+    }).catch(error => {
+        // Handle CSRF cookie error here
+        console.error("CSRF cookie request failed:", error);
+        alert("An error occurred. Please try again later.");
+    });
+ 
+
 };
+
+
 </script>

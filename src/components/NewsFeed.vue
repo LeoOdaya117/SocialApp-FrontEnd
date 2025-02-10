@@ -1,5 +1,5 @@
 <template>
-  <div class=" rounded-lg h-[90vh] overflow-y-scroll scrollbar-hide" ref="newsfeedContainer">
+  <div class="h-full rounded-lg h-screen overflow-y-scroll scrollbar-hide" ref="newsfeedContainer">
 
 
    

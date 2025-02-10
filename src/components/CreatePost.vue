@@ -33,18 +33,28 @@
         <button @click="removeImage" class="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 text-xs">✕</button>
       </div>
 
-      <!-- Image Upload & Post Button -->
-      <div class="flex items-center justify-between mt-3">
-        <!-- Upload Image Button -->
-        <label class="flex items-center space-x-2 text-blue-500 cursor-pointer hover:text-blue-600">
-          <input type="file" @change="handleImageUpload" class="hidden" accept="image/*" />
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 16l3-3m0 0l3 3m-3-3v6m5-1a5 5 0 100-10 5 5 0 000 10zm9 2v-3m0 0l3 3m-3-3l-3 3m3-3V7m0 3l-3-3m3 3l3-3" />
-          </svg>
-          <span class="text-sm font-medium">Upload Image</span>
-        </label>
+      <!-- Image Upload Section (Hidden if Image is Selected) -->
+      <div 
+        v-if="!previewImage" 
+        class="mt-2 flex flex-col items-center justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10"
+        @dragover.prevent="dragOver"
+        @dragleave="dragLeave"
+        @drop="handleDrop"
+      >
+        <div class="text-center">
+          <label for="file-upload" class="cursor-pointer flex flex-col items-center">
+            <svg class="h-10 w-10 text-indigo-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 16l3 3m0 0l3-3m-3 3V4m6 13l3 3m0 0l3-3m-3 3V4"></path>
+            </svg>
+            <span class="mt-2 text-sm text-gray-600 font-semibold">Click to upload or drag & drop</span>
+            <input id="file-upload" type="file" @change="handleImageUpload" class="hidden" accept="image/*" />
+          </label>
+          <p class="text-xs text-gray-500 mt-1">PNG, JPG, GIF up to 10MB</p>
+        </div>
+      </div>
 
-        <!-- Post Button -->
+      <!-- Post Button -->
+      <div class="flex items-center justify-between mt-3">
         <button
           @click="submitPost"
           class="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 transition duration-200"
@@ -67,6 +77,7 @@ import { ref } from "vue";
 const newPost = ref("");
 const previewImage = ref(null);
 const isModalOpen = ref(false);
+const isDragging = ref(false);
 
 const user = ref({
   firstname: "Leo",
@@ -84,9 +95,31 @@ const closeModal = () => {
   previewImage.value = null;
 };
 
-// Handle Image Upload
+// Handle Image Upload from File Input
 const handleImageUpload = (event) => {
   const file = event.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      previewImage.value = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+};
+
+// Handle Drag & Drop Upload
+const dragOver = (event) => {
+  event.preventDefault();
+  isDragging.value = true;
+};
+const dragLeave = () => {
+  isDragging.value = false;
+};
+const handleDrop = (event) => {
+  event.preventDefault();
+  isDragging.value = false;
+  
+  const file = event.dataTransfer.files[0];
   if (file) {
     const reader = new FileReader();
     reader.onload = (e) => {

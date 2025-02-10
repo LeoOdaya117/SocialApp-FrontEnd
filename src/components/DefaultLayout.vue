@@ -4,7 +4,10 @@ import Navbar from '../components/Navbar.vue';
 
 <template>
 
-     <RouterView />
+     <Navbar />
+     <div class="pt-16"> <!-- Adjust padding to push content down -->
+          <RouterView />
+     </div>
 </template>
 
 <style scoped>

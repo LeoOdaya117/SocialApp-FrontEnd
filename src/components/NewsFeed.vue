@@ -1,65 +1,35 @@
-<template>
-  <div class="h-full rounded-lg h-screen overflow-y-scroll scrollbar-hide" ref="newsfeedContainer">
-
-
-   
-
-
-    <div v-for="post in posts" :key="post.id" class="bg-white shadow p-4 rounded-lg mb-4">
-      <div class="flex items-center mb-2">
-        <img :src="post.avatar" alt="Avatar" class="w-10 h-10 rounded-full mr-3" />
-        <div>
-          <h2 class="font-bold">{{ post.user }}</h2>
-          <p class="text-gray-500 text-sm">{{ post.created_at }}</p>
-        </div>
-      </div>
-      <p class="text-gray-800 mb-2">{{ post.content }}</p>
-
-      <!-- Post Photo (if available) -->
-      <img v-if="post.photo" :src="post.photo" alt="Post Image" class="w-full rounded-lg mb-2 object-cover max-h-80">
-
-      <div class="flex justify-between text-gray-500 text-sm">
-        <span>👍 {{ post.likes }} Likes</span>
-        <span>💬 {{ post.comments }} Comments</span>
-      </div>
-    </div>
-
-    <div v-if="loading" class="text-center text-gray-500 py-2">Loading more posts...</div>
-  </div>
-</template>
-
 <script setup>
+// IMPORTS
 import { ref, onMounted, onUnmounted } from "vue";
+import { HandThumbUpIcon, ChatBubbleBottomCenterTextIcon, ArrowPathRoundedSquareIcon } from '@heroicons/vue/24/outline';
+import axiosClient from "../axios";
 
+// USER
 const user = ref({
     firstname: "Leo",
     lastname: "Odaya",
     profile: "https://i.pravatar.cc/50?img=1",
-  });
+});
 
-const posts = ref([
-  {
-    id: 1,
-    user: "John Doe",
-    avatar: "https://i.pravatar.cc/50?img=1",
-    content: "This is my first post! 🎉",
-    photo: "https://picsum.photos/400/300?random=1", // Static test image
-    likes: 5,
-    comments: 2,
-    created_at: "2 hours ago",
-  },
-  {
-    id: 2,
-    user: "Jane Smith",
-    avatar: "https://i.pravatar.cc/50?img=2",
-    content: "Loving this new platform! 🚀",
-    photo: "https://picsum.photos/400/300?random=2",
-    likes: 10,
-    comments: 4,
-    created_at: "5 hours ago",
-  },
-]);
 
+// POST
+const posts = ref([]);
+
+onMounted(()=>{
+    axiosClient.get('/api/posts').then((Response)=>{
+      console.log(Response.data);
+        posts.value = Response.data;
+    });
+});
+
+
+
+// LIKE FUNCTION
+function likePost(id, name){
+   alert('You liked a post of ' + name);
+}
+
+// LOADING MORE
 const loading = ref(false);
 const newsfeedContainer = ref(null);
 
@@ -71,10 +41,12 @@ const loadMorePosts = () => {
     for (let i = 0; i < 3; i++) {
       posts.value.push({
         id: posts.value.length + 1,
-        user: "Random User",
-        avatar: `https://i.pravatar.cc/50?img=${posts.value.length + 1}`,
+        user: {
+          name: "Random User",
+          avatar: `https://i.pravatar.cc/50?img=${posts.value.length + 1}`,
+        },
         content: "Another dummy post!",
-        photo: `https://picsum.photos/400/300?random=${posts.value.length + 1}`, // Static random image
+        image: `https://picsum.photos/400/300?random=${posts.value.length + 1}`,
         likes: Math.floor(Math.random() * 20),
         comments: Math.floor(Math.random() * 10),
         created_at: "Just now",
@@ -107,25 +79,64 @@ onUnmounted(() => {
 
 
 
-
-const newPost = ref("");
-const previewImage = ref(null);
-
-const handleImageUpload = (event) => {
-  const file = event.target.files[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      previewImage.value = e.target.result;
-    };
-    reader.readAsDataURL(file);
-  }
-};
-
-const submitPost = () => {
-  alert("Post submitted! (You can now handle post submission logic)");
-};
 </script>
+
+<template>
+  <div class="rounded-lg h-[80vh] overflow-y-scroll scrollbar-hide" ref="newsfeedContainer">
+    <div v-for="post in posts" :key="post.id" class="bg-white shadow p-4 rounded-lg mb-4">
+      <!-- User Info -->
+      <div class="flex items-center mb-2">
+        <router-link to="/profile">
+          <img :src="post.user.avatar ? post.user.avatar : 'https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg'" alt="Avatar" class="w-10 h-10 rounded-full mr-3" />
+        </router-link>
+        <div>
+          <router-link to="/profile">
+            <h2 class="font-bold">{{ post.user.name }}</h2>
+          </router-link>
+          <p class="text-gray-500 text-sm">{{ post.created_at }}</p>
+        </div>
+      </div>
+
+      <!-- Post Content -->
+      <p class="text-gray-800 mb-2">{{ post.content }}</p>
+
+      <!-- Post Photo (if available) -->
+      <img v-if="post.image" :src="post.image" alt="Post Image" 
+          class="w-full rounded-lg mb-2 object-cover max-h-80">
+
+      <!-- Likes, Comments, Shares -->
+      <div class="flex justify-between mb-2">
+        <div class="flex items-center gap-2 text-gray-500 text-sm mb-1">
+         <div class="flex gap-1 cursor-pointer">
+            <HandThumbUpIcon class="w-5 h-5 text-gray-500 " @click="likePost(post.id, post.user)"/>
+            <span>{{ post.likes }} Likes</span>
+         </div>
+         <div class="flex gap-1">
+            <ChatBubbleBottomCenterTextIcon class="w-5 h-5 text-gray-500 cursor-pointer" />
+            <span>{{ post.comments }} Comments</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 text-gray-500 text-sm mb-1">
+          <ArrowPathRoundedSquareIcon class="w-5 h-5 text-gray-500 cursor-pointer" />
+          <span>{{ post.comments }} Shares</span>
+        </div>
+      </div>
+
+      <hr class="mb-2">
+
+      <!-- Comment Input -->
+      <div class="flex items-center space-x-2">
+        <img :src="user.profile" alt="Avatar" class="w-10 h-10 rounded-full border border-gray-300" />
+        <input
+          placeholder="Write a comment..."
+          class="flex-1 p-1 border border-gray-300 rounded-full bg-gray-100 cursor-pointer"
+        />
+      </div>
+    </div>
+
+    <div v-if="loading" class="text-center text-gray-500 py-2">Loading more posts...</div>
+  </div>
+</template>
 
 <style scoped>
 /* Hide scrollbar */

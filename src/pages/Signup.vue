@@ -4,6 +4,7 @@ import { RouterLink } from 'vue-router';
 import GuestLayout from '../components/GuestLayout.vue';
 import { ref } from 'vue';
 import axiosClient from '../axios';
+import { showToast } from '../utils/toast.js';
 
 const data = ref({
     name: '',
@@ -13,8 +14,27 @@ const data = ref({
 })
 
 function submit() {
+   
+
     axiosClient.get('/sanctum/csrf-cookie').then(() => {
-        axiosClient.post('/register', data.value)
+        axiosClient.post('/register', data.value).then(response => {
+            showToast('success', 'Registration Success!');
+
+
+            setTimeout(() => {
+                router.push({ name: "Home" });
+            }, 2000); // 2 seconds delay
+        }).catch(error => {
+            
+
+            showToast('error',error.response?.data?.message || "Login failed. Please try again.");
+           
+           
+        });
+    }).catch(error => {
+        // Handle CSRF cookie error here
+        console.error("CSRF cookie request failed:", error);
+        alert("An error occurred. Please try again later.");
     });
 }
 
@@ -28,7 +48,7 @@ function submit() {
             
             <h2 class="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">Create an Account</h2>
         </div>
-        {{ data }}
+        
         <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
             <form @submit.prevent="submit" class="space-y-6" >
                 <div>
@@ -36,6 +56,7 @@ function submit() {
                     <div class="mt-2">
                         <input v-model="data.name" type="text" name="fullname" id="fullname" autocomplete="fullname"  class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
                     </div>
+                    <p class="text-sm text-red-600 mt-1"></p>
                 </div>
                 
                 <div>

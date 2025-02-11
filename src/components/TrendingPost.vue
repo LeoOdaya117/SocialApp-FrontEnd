@@ -3,7 +3,7 @@
   <div class="bg-white p-4 rounded-lg shadow w-full">
     <h2 class="text-xl font-bold mb-5">Latest Trending Post</h2>
     <ul class="w-full">
-      <li v-for="post in trendingPost" :key="post.id" class="flex items-center mb-2">
+      <li v-for="post in trendingPost" :key="post.id" class="flex items-center mb-2  hover:bg-gray-200 rounded cursor-pointer">
         
         <img :src="post.avatar" alt="Avatar" class="w-10 h-10 rounded-full mr-3" />
         <div>

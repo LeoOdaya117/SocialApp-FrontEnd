@@ -1,3 +1,11 @@
+
+<style scoped>
+.dropdown:hover > .dropdown-content {
+	display: block;
+}
+
+</style>
+
 <template>
   <nav class="bg-white shadow-md dark:bg-gray-900 fixed top-0 left-0 w-full z-50">
     <div class="max-w-6xl mx-auto px-4">
@@ -6,8 +14,17 @@
         <router-link to="/" class="text-xl font-bold text-gray-800 dark:text-white">
           SocialApp
         </router-link>
+        
+        <div class=" m-flex space-x-6  align-middle">
+          <router-link to="/" class="text-gray-600 dark:text-gray-300 hover:text-blue-500">Newsfeed</router-link>
+          <router-link to="/" class="text-gray-600 dark:text-gray-300 hover:text-blue-500">Notifification</router-link>
+        </div>
 
-        <!-- Search Bar (Desktop) -->
+       
+        <!-- Desktop Menu -->
+        <div class="hidden md:flex space-x-6 align-middle text-center">
+          <!-- <router-link to="/profile" class="text-gray-600 dark:text-gray-300 hover:text-blue-500">Profile</router-link> -->
+           <!-- Search Bar (Desktop) -->
         <div class="hidden md:flex items-center space-x-4">
           <input
             type="text"
@@ -16,11 +33,25 @@
           />
         </div>
 
-        <!-- Desktop Menu -->
-        <div class="hidden md:flex space-x-6">
-          <router-link to="/" class="text-gray-600 dark:text-gray-300 hover:text-blue-500">Home</router-link>
-          <router-link to="/profile" class="text-gray-600 dark:text-gray-300 hover:text-blue-500">Profile</router-link>
-          <button @click="logout" class="text-red-500 hover:text-red-700">Logout</button>
+          <div class="dropdown inline-block relative">
+            <img src="https://i.pravatar.cc/50?img=1" alt="Avatar" class="w-8 h-8 rounded-full cursor-pointer" />
+            <ul class="dropdown-content absolute hidden text-gray-700 pt-2 ">
+              
+              <li>
+              
+                <router-link to="/profile" class="rounded-t bg-gray-200 hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap">Profile</router-link>
+              
+              </li>
+              <li>
+                <button class="rounded-t bg-gray-200 hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap" @click="logout">
+                Logout
+                </button>
+              </li>
+             
+                  
+            </ul>
+          </div>
+          <!-- <button @click="logout" class="text-red-500 hover:text-red-700">Logout</button> -->
         </div>
 
         <!-- Mobile Menu Button -->

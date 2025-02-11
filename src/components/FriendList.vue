@@ -2,8 +2,8 @@
 <template>
   <div class="bg-white p-4 rounded-lg shadow">
     <h2 class="text-xl font-bold mb-4">Friends</h2>
-    <ul >
-      <li v-for="friend in friends" :key="friend.id" @click="chat(friend.name)" class="flex items-center mb-4 w-full friends">
+    <ul class="">
+      <li v-for="friend in friends" :key="friend.id" @click="chat(friend.name)" class="flex items-center mb-4 w-full friends hover:bg-gray-200 p-1 gap-0 rounded-full">
         <img :src="friend.avatar" alt="Avatar" class="w-8 h-8 rounded-full mr-2" />
         <span class="flex-grow">{{ friend.name }}</span>
       </li>

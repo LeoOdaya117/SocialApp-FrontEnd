@@ -6,6 +6,7 @@ import Signup from "./pages/Signup.vue"
 import Home from "./pages/Home.vue"
 import Profile from "./pages/Profile.vue"
 import NotFound from './pages/NotFound.vue'
+import Search from './pages/Search.vue'
 
 
 const routes = [
@@ -14,7 +15,12 @@ const routes = [
         component: DefaultLayout,
         children:[
             {path:"/", name: "Home", component: Home},
-            {path:"/profile", name: "Profile", component: Profile}
+            {path:"/profile", name: "Profile", component: Profile},
+            {
+                path: "/search",
+                name: "Search",
+                component: Search
+            }
             
         ]
     },
@@ -27,9 +33,7 @@ const routes = [
         path: "/signup",
         name: "Signup",
         component: Signup
-    }
-    
-    ,
+    },
     {
         path: "/:pathMatch(.*)*",
         name: "not-found",

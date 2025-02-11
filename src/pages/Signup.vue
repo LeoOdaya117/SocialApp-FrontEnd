@@ -13,6 +13,13 @@ const data = ref({
     password_confirmation: '',
 })
 
+const errors =ref({
+    name: [],
+    email: [],
+    password: [], 
+
+})
+
 function submit() {
    
 
@@ -25,17 +32,21 @@ function submit() {
                 router.push({ name: "Home" });
             }, 2000); // 2 seconds delay
         }).catch(error => {
-            
-
-            showToast('error',error.response?.data?.message || "Login failed. Please try again.");
+            errors.value = error.response.data.errors;
+           
            
            
         });
     }).catch(error => {
-        // Handle CSRF cookie error here
-        console.error("CSRF cookie request failed:", error);
-        alert("An error occurred. Please try again later.");
+        console.error("Registration error:", error.response?.data); // Log the response to debug
+
+        if (error.response && error.response.data && error.response.data.errors) {
+            errors.value = error.response.data.errors; // Store errors
+        } else {
+            errors.value = { general: ["An unexpected error occurred. Please try again."] };
+        }
     });
+
 }
 
 
@@ -56,7 +67,7 @@ function submit() {
                     <div class="mt-2">
                         <input v-model="data.name" type="text" name="fullname" id="fullname" autocomplete="fullname"  class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
                     </div>
-                    <p class="text-sm text-red-600 mt-1"></p>
+                    <p class="text-sm text-red-600 mt-1" v-if="errors.name && errors.name.length">{{ errors.name[0] }}</p>
                 </div>
                 
                 <div>
@@ -64,6 +75,7 @@ function submit() {
                     <div class="mt-2">
                     <input v-model="data.email" type="email" name="email" id="email" autocomplete="email" required="" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
                     </div>
+                    <p class="text-sm text-red-600 mt-1" v-if="errors.email && errors.email.length">{{ errors.email[0] }}</p>
                 </div>
         
                 <div>
@@ -74,7 +86,8 @@ function submit() {
                     <div class="mt-2">
                         <input v-model="data.password" type="password" name="password" id="password" autocomplete="current-password" required="" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
                     </div>
-                </div>
+                    <p class="text-sm text-red-600 mt-1" v-if="errors.password && errors.password.length">{{ errors.password[0] }}</p>
+                    </div>
                 <div>
                     <div class="flex items-center justify-between">
                     <label for="confirm-password" class="block text-sm/6 font-medium text-gray-900">Confirm Password</label>

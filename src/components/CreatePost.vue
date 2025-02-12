@@ -86,15 +86,19 @@
      
     </div>
   </div>
+
+
+
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, defineEmits } from "vue";
+
 import axiosClient from '../axios';
 import { showToast } from '../utils/toast.js';
 import router from '../router.js';
 const data = ref({
-  user_id: 1, // Replace with the actual logged-in user ID
+  user_id: null, // Replace with the actual logged-in user ID
   content: "",
   image: null
 });
@@ -162,7 +166,10 @@ const removeImage = () => {
   previewImage.value = null;
 };
 
-// Submit Post
+
+
+const emit = defineEmits(["show-toast"]);
+
 const submitPost = async () => {
   if (!data.value.content && !data.value.image) {
     alert("Please add content or an image!");
@@ -170,28 +177,23 @@ const submitPost = async () => {
   }
 
   const formData = new FormData();
-  formData.append("user_id", user.value.id);
   formData.append("content", data.value.content);
-  
+
   if (data.value.image) {
     formData.append("image", data.value.image);
   }
 
- 
-  axiosClient.post('/api/posts', formData).then(response => {
-      showToast('success', 'Post Uploaded!');
-
-
-      setTimeout(() => {
-          router.push({ name: "Home" });
-      }, 2000); // 2 seconds delay
-  }).catch(error => {
+  axiosClient.post('/api/posts', formData)
+    .then(response => {
+      console.log('Post created');
       
-
-      showToast('error',error.response?.data?.message || "Upload   failed. Please try again.");
-      
-      
-  });
+      emit("show-toast", { type: "success", message: "Post Uploaded!" }); // Emits to parent
+      closeModal();
+      removeImage();
+    })
+    .catch(error => {
+      emit("show-toast", { type: "error", message: error.response?.data?.message || "Upload failed. Please try again." });
+    });
 };
 
 </script>

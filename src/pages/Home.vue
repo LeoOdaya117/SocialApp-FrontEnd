@@ -15,7 +15,7 @@
 
     <!-- Middle Column: Newsfeed (Scrollable) -->
     <div class="md:col-span-2">
-        <CreatePost/>
+        <CreatePost @show-toast="handleToast" />
       <Newsfeed />
     </div>
 
@@ -34,4 +34,11 @@ import Newsfeed from "../components/Newsfeed.vue";
 import FriendList from "../components/FriendList.vue";
 import CreatePost from "../components/CreatePost.vue";
 import TopUser from "../components/TopUser.vue";
+import { showToast } from '../utils/toast.js';
+
+const handleToast = ({ type, message }) => {
+  console.log("Toast Event Triggered:", type, message); // Debugging log
+  showToast(type, message);
+};
+
 </script>

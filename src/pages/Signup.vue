@@ -5,7 +5,7 @@ import GuestLayout from '../components/GuestLayout.vue';
 import { ref } from 'vue';
 import axiosClient from '../axios';
 import { showToast } from '../utils/toast.js';
-
+import router from '../router.js';
 const data = ref({
     name: '',
     email: '',

@@ -79,10 +79,6 @@ const handleToast = ({ type, message }) => {
   });
 });
 
-
-
-
-
   // LOADING MORE
   const loading = ref(false);
   const newsfeedContainer = ref(null);

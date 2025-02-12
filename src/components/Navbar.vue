@@ -15,23 +15,20 @@
           SocialApp
         </router-link>
         
-        <div class=" m-flex space-x-6  align-middle">
-          <router-link to="/" class="text-gray-600 dark:text-gray-300 hover:text-blue-500">Newsfeed</router-link>
-          <router-link to="/" class="text-gray-600 dark:text-gray-300 hover:text-blue-500">Notifification</router-link>
-        </div>
+       
 
        
         <!-- Desktop Menu -->
         <div class="hidden md:flex space-x-6 align-middle text-center">
           <!-- <router-link to="/profile" class="text-gray-600 dark:text-gray-300 hover:text-blue-500">Profile</router-link> -->
            <!-- Search Bar (Desktop) -->
-        <div class="hidden md:flex items-center space-x-4">
-          <input
-            type="text"
-            placeholder="Search..."
-            class="px-3 py-1 w-60 border rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
-          />
-        </div>
+          <div class="hidden md:flex items-center space-x-4">
+            <input
+              type="text"
+              placeholder="Search..."
+              class="px-3 py-1 w-60 border rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
+            />
+          </div>
 
           <div class="dropdown inline-block relative">
             <img src="https://i.pravatar.cc/50?img=1" alt="Avatar" class="w-8 h-8 rounded-full cursor-pointer" />

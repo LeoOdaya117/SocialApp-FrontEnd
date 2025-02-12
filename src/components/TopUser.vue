@@ -5,10 +5,10 @@
     <ul>
       <li v-for="User in topUsers" :key="User.id" class="flex items-center mb-3 cursor-pointer hover:bg-gray-200 rounded-full">
         <div class="flex items-center mb-2">
-            <img :src="User.avatar" alt="Avatar" class="w-10 h-10 rounded-full mr-3" />
+            <img :src="User.avatar ?? 'https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg'" alt="Avatar" class="w-10 h-10 rounded-full mr-3" />
             <div>
             <h2 class="font-bold">{{ User.name }}</h2>
-            <p class="text-gray-500 text-sm">{{ User.points }} pts</p>
+            <p class="text-gray-500 text-sm">{{ User.posts_count }} pts</p>
             </div>
         </div>
       </li>
@@ -17,43 +17,18 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
+import axiosClient from '../axios';
 
-const topUsers = ref([
-  {
-    id: 1,
-    name: "John Doe",
-    avatar: "https://i.pravatar.cc/50?img=1",
-    points: 50,
-  },
-  {
-    id: 2,
-    name: "Jane Smith",
-    avatar: "https://i.pravatar.cc/50?img=2",
-    points: 45,
-  }
-  ,
-  {
-    id: 3,
-    name: "Rowens Miles",
-    avatar: "https://i.pravatar.cc/50?img=3",
-    points: 40,
-  }
-  ,
-  {
-    id: 4,
-    name: "David Well",
-    avatar: "https://i.pravatar.cc/50?img=4",
-    points: 39,
-  }
-  ,
-  {
-    id: 5,
-    name: "George Gia",
-    avatar: "https://i.pravatar.cc/50?img=5",
-    points: 35,
-  }
+const topUsers = ref([]);
 
 
-]);
+onMounted(()=>{
+      axiosClient.get('/api/topuser').then((Response)=>{
+        console.log(Response.data);
+        topUsers.value = Response.data;
+      });
+
+
+  });
 </script>

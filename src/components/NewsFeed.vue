@@ -4,6 +4,12 @@
   import { HandThumbUpIcon, ChatBubbleBottomCenterTextIcon, ArrowPathRoundedSquareIcon } from '@heroicons/vue/24/outline';
   import axiosClient from "../axios";
   import echo from '../plugins/echo'; // Import Echo instance
+  import { showToast } from '../utils/toast.js';
+  import CreatePost from "../components/CreatePost.vue";
+const handleToast = ({ type, message }) => {
+  console.log("Toast Event Triggered:", type, message); // Debugging log
+  showToast(type, message);
+};
 
   // USER
   const user = ref({
@@ -21,6 +27,8 @@
         // console.log(Response.data);
           posts.value = Response.data;
       });
+
+
   });
 
   onMounted(() => {
@@ -33,6 +41,7 @@
                 console.error('Received an empty post:', post);
             }
       });
+    
 
   }); 
 
@@ -40,9 +49,39 @@
 
 
   // LIKE FUNCTION
-  function likePost(id, name){
-    alert('You liked a post of ' + name);
-  }
+  const likePost = async (postId) => {
+    try {
+      const { data } = await axiosClient.post(`/api/posts/${postId}/like`);
+
+      const post = posts.value.find((p) => p.id === postId);
+      if (post) {
+        post.likes = data.likes; // Update like count
+        post.likedByUser = !post.likedByUser; // Toggle like status
+      }
+      
+    } catch (error) {
+      console.error("Error liking post:", error.response?.data || error.message);
+    }
+  };  
+
+  onMounted(() => {
+  echo.channel("post-likes").listen(".PostLikedEvent", (data) => {
+    console.log("✅ PostLiked event received!", data);
+
+    // Find the post
+    const postIndex = posts.value.findIndex((p) => p.id == data.postId);
+    if (postIndex !== -1) {
+      // Use Object.assign() to trigger reactivity
+      posts.value[postIndex] = Object.assign({}, posts.value[postIndex], {
+        likes: data.likesCount
+      });
+    }
+  });
+});
+
+
+
+
 
   // LOADING MORE
   const loading = ref(false);
@@ -76,7 +115,7 @@
 
     const { scrollTop, scrollHeight, clientHeight } = newsfeedContainer.value;
     if (scrollTop + clientHeight >= scrollHeight - 20) {
-      loadMorePosts();
+      // loadMorePosts();
     }
   };
 
@@ -114,7 +153,9 @@
   </script>
 
   <template>
-    <div class="rounded-lg h-[80vh] overflow-y-scroll scrollbar-hide" ref="newsfeedContainer">
+     
+    <div class="rounded-lg h-screen overflow-y-scroll scrollbar-hide" ref="newsfeedContainer">
+      <CreatePost @show-toast="handleToast" />
       <div v-for="post in posts" :key="post.id" class="bg-white shadow p-4 rounded-lg mb-4">
         <!-- User Info -->
         <div class="flex items-center mb-2">
@@ -140,7 +181,7 @@
         <div class="flex justify-between mb-2">
           <div class="flex items-center gap-2 text-gray-500 text-sm mb-1">
           <div class="flex gap-1 cursor-pointer">
-              <HandThumbUpIcon class="w-5 h-5 text-gray-500 " @click="likePost(post.id, post.user)"/>
+              <HandThumbUpIcon class="w-5 h-5 hover:bg-red-200 rounded-full" :class="post.likedByUser ? 'text-red-500' : 'text-gray-500'" @click="likePost(post.id)"/>
               <span>{{ post.likes }} Likes</span>
           </div>
           <div class="flex gap-1">

@@ -1,7 +1,7 @@
 <!-- src/views/Home.vue -->
 <template>
   
-  <div class="max-w-6xl mx-auto py-2 grid grid-cols-1 md:grid-cols-4 gap-4">
+  <div class="max-w-6xl mx-auto px-2 grid grid-cols-1 md:grid-cols-4 gap-4">
     <!-- Left Column: Create Post -->
     <div class="hidden md:flex">
         <div class="md:col-span-1">
@@ -15,8 +15,8 @@
 
     <!-- Middle Column: Newsfeed (Scrollable) -->
     <div class="md:col-span-2">
-        <CreatePost @show-toast="handleToast" />
-      <Newsfeed />
+        
+        <Newsfeed />
     </div>
 
     <!-- Right Column: Friend List -->

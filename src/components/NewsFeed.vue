@@ -4,12 +4,15 @@
   import { HandThumbUpIcon, ChatBubbleBottomCenterTextIcon, ArrowPathRoundedSquareIcon } from '@heroicons/vue/24/outline';
   import axiosClient from "../axios";
   import echo from '../plugins/echo'; // Import Echo instance
-  import { showToast } from '../utils/toast.js';
-  import CreatePost from "../components/CreatePost.vue";
-const handleToast = ({ type, message }) => {
-  console.log("Toast Event Triggered:", type, message); // Debugging log
-  showToast(type, message);
-};
+  // import { showToast } from '../utils/toast.js';
+  // import CreatePost from "../components/CreatePost.vue";
+  import { useRoute } from "vue-router";
+
+
+  const route = useRoute(); // Get route information
+  const searchQuery = ref(route.query.q || ""); // Get search query from URL
+
+ 
 
   // USER
   const user = ref({
@@ -23,7 +26,7 @@ const handleToast = ({ type, message }) => {
   const posts = ref([]);
 
   onMounted(()=>{
-      axiosClient.get('/api/posts').then((Response)=>{
+      axiosClient.get('/api/posts',{ params: { q: searchQuery.value } }).then((Response)=>{
         // console.log(Response.data);
           posts.value = Response.data;
       });
@@ -34,6 +37,7 @@ const handleToast = ({ type, message }) => {
   onMounted(() => {
       echo.channel('newsfeed') // ✅ Correct channel name
           .listen('PostCreated', ({ post }) => { // Destructure to get the actual post data
+            console.log(post.data);
             if (post) {
                 // console.log('New Post Received:', post);
                 posts.value.unshift(post); // Prepend the new post to the feed
@@ -151,7 +155,7 @@ const handleToast = ({ type, message }) => {
   <template>
      
     <div class="rounded-lg h-screen overflow-y-scroll scrollbar-hide" ref="newsfeedContainer">
-      <CreatePost @show-toast="handleToast" />
+      
       <div v-for="post in posts" :key="post.id" class="bg-white shadow p-4 rounded-lg mb-4">
         <!-- User Info -->
         <div class="flex items-center mb-2">

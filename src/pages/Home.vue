@@ -15,7 +15,7 @@
 
     <!-- Middle Column: Newsfeed (Scrollable) -->
     <div class="md:col-span-2">
-        
+      <CreatePost @show-toast="handleToast" />
         <Newsfeed />
     </div>
 

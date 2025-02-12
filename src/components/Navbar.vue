@@ -23,11 +23,15 @@
           <!-- <router-link to="/profile" class="text-gray-600 dark:text-gray-300 hover:text-blue-500">Profile</router-link> -->
            <!-- Search Bar (Desktop) -->
           <div class="hidden md:flex items-center space-x-4">
-            <input
-              type="text"
-              placeholder="Search..."
-              class="px-3 py-1 w-60 border rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
-            />
+            <form @submit.prevent="goToSearch">
+              <input
+                v-model="searchQuery" 
+                type="text"
+                placeholder="Search..."
+                class="px-3 py-1 w-60 border rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
+              />
+            </form>
+            
           </div>
 
           <div class="dropdown inline-block relative">
@@ -81,7 +85,7 @@
 <script setup>
 import { ref } from "vue";
 import router from '../router.js';
-
+const searchQuery = ref("");
 import axiosClient from '../axios';
 
 
@@ -111,6 +115,12 @@ const logout = () => {
     });
  
 
+};
+
+const goToSearch = () => {
+  if (searchQuery.value.trim() !== "") {
+    router.push({ name: "Search", query: { q: searchQuery.value } });
+  }
 };
 
 

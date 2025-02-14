@@ -88,12 +88,12 @@ const activeFilter = ref("Posts");
 const filters = [
   { name: "Posts" },
   { name: "People" },
-  { name: "Photos" },
+  // { name: "Photos" },
 ];
 
 const peopleResults =ref([]);
 
-const photoResults =ref([]);
+// const photoResults =ref([]);
 
 const posts =ref([]);
 
@@ -107,10 +107,10 @@ const fetchSearchResults = () => {
         peopleResults.value = response.data;
       });
 
-    axiosClient.get("/api/photos", { params: { q: searchQuery.value } })
-      .then(response => {
-        photoResults.value = response.data;
-      });
+    // axiosClient.get("/api/photos", { params: { q: searchQuery.value } })
+    //   .then(response => {
+    //     photoResults.value = response.data;
+    //   });
   }
 };
 

@@ -20,24 +20,20 @@ const errors =ref({
 
 })
 
-function submit() {
-   
-
-    axiosClient.get('/sanctum/csrf-cookie').then(() => {
-        axiosClient.post('/register', data.value).then(response => {
-            showToast('success', 'Registration Success!');
 
 
-            setTimeout(() => {
-                router.push({ name: "Home" });
-            }, 2000); // 2 seconds delay
-        }).catch(error => {
-            errors.value = error.response.data.errors;
-           
-           
-           
-        });
-    }).catch(error => {
+async function register() {
+    try {
+        await axiosClient.get('/sanctum/csrf-cookie');
+        const response = await axiosClient.post('/register', data.value);
+        
+        showToast('success', 'Registration Success!');
+        
+        setTimeout(() => {
+            router.push({ name: "Home" });
+        }, 2000); // 2 seconds delay
+
+    } catch (error) {
         console.error("Registration error:", error.response?.data); // Log the response to debug
 
         if (error.response && error.response.data && error.response.data.errors) {
@@ -45,8 +41,7 @@ function submit() {
         } else {
             errors.value = { general: ["An unexpected error occurred. Please try again."] };
         }
-    });
-
+    }
 }
 
 
@@ -61,7 +56,7 @@ function submit() {
         </div>
         
         <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-            <form @submit.prevent="submit" class="space-y-6" >
+            <form @submit.prevent="register" class="space-y-6" >
                 <div>
                     <label for="fullname" class="block text-sm/6 font-medium text-gray-900">Full Name</label>
                     <div class="mt-2">

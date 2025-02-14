@@ -12,29 +12,24 @@ const data = ref({
 });
 
 
-async function submit() {
 
-    axiosClient.get('/sanctum/csrf-cookie').then(() => {
-        axiosClient.post('/login', data.value).then(response => {
-            showToast('success', 'Login Success!');
+async function login() {
+    try {
+        await axiosClient.get('/sanctum/csrf-cookie');
+        await axiosClient.post('/login', data.value);
 
+        showToast('success', 'Login Success!');
 
-            setTimeout(() => {
-                router.push({ name: "Home" });
-            }, 2000); // 2 seconds delay
-        }).catch(error => {
-            
+        setTimeout(() => {
+            router.push({ name: "Home" });
+        }, 2000); // 2 seconds delay
+    } catch (error) {
+        console.error("Login error:", error.response?.data); // Log error for debugging
 
-            showToast('error',error.response?.data?.message || "Login failed. Please try again.");
-           
-           
-        });
-    }).catch(error => {
-        // Handle CSRF cookie error here
-        console.error("CSRF cookie request failed:", error);
-        alert("An error occurred. Please try again later.");
-    });
+        showToast('error', error.response?.data?.message || "Login failed. Please try again.");
+    }
 }
+
 </script>
 
 <template>
@@ -46,7 +41,7 @@ async function submit() {
 
         <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
            
-            <form @submit.prevent="submit" class="space-y-6">
+            <form @submit.prevent="login" class="space-y-6">
 
                 <div>
                     <label for="email" class="block text-sm/6 font-medium text-gray-900">Email address</label>

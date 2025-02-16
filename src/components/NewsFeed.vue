@@ -109,7 +109,7 @@ const closeImageModal = () => {
 </script>
 
 <template>
-    <div class="rounded-lg h-screen overflow-y-scroll scrollbar-hide" ref="newsfeedContainer">
+    <div class="rounded h-screen overflow-y-scroll scrollbar-hide" ref="newsfeedContainer">
         <div v-for="post in posts" :key="post.id" class="bg-white shadow p-4 rounded-lg mb-4">
             <div class="flex items-center mb-2">
                 <router-link to="/profile">
@@ -122,7 +122,8 @@ const closeImageModal = () => {
                     <p class="text-gray-500 text-sm">{{ post.created_at }}</p>
                 </div>
             </div>
-            <p class="text-gray-800 mb-2">{{ post.content }}</p>
+            <p class="text-gray-800 mb-2 text-justify whitespace-pre-line" v-html="post.content"></p>
+
             <img v-if="post.image" :src="post.image" @click="openImageModal(post.image)" alt="Post Image" class="w-full rounded-lg mb-2 object-cover max-h-80">
             <div class="flex justify-between mb-2">
                 <div class="flex items-center gap-2 text-gray-500 text-sm mb-1">

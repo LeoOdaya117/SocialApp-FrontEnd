@@ -1,10 +1,29 @@
+<style scoped>
+
+/* Hide scrollbar for Chrome, Safari */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for Firefox */
+.scrollbar-hide {
+  scrollbar-width: none;
+}
+
+/* Hide scrollbar for Edge */
+.scrollbar-hide::-ms-scrollbar {
+  display: none;
+}
+
+</style>
+
 <template>
   <!-- Create Post Button -->
   <div class="bg-white p-4 rounded-lg shadow-md mb-4">
     <div class="flex items-center space-x-3">
-      <img :src="user.profile" alt="Avatar" class="w-12 h-12 rounded-full border border-gray-300" />
+      <img :src="authStore.user.avatar ?? 'https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg'" alt="Avatar" class="w-12 h-12 rounded-full border border-gray-300" />
       <input
-        placeholder="What's on your mind, Leo?"
+        placeholder="What's on your mind?"
         class="flex-1 p-3 border border-gray-300 rounded-full bg-gray-100 cursor-pointer"
         @click="openModal"
         readonly
@@ -19,13 +38,59 @@
       <h2 class="text-lg font-semibold mb-3 text-gray-700">Create Post</h2>
 
       <!-- Avatar & Input -->
-      <div class="flex items-center space-x-3 mb-3">
-        <img :src="user.profile" alt="Avatar" class="w-12 h-12 rounded-full border border-gray-300" />
-        <input
+      <div class="bloock items-center mb-3">
+        
+
+        <div class="flex items-center">
+          <!-- User Avatar -->
+          <img 
+            :src="authStore.user?.avatar ?? 'https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg'" 
+            alt="Avatar" 
+            class="w-12 h-12 rounded-full border border-gray-300"
+          />
+
+          <!-- User Name & Privacy Select -->
+          <div class="ml-3">
+            <p class="text-sm font-bold mr-2">
+              {{ authStore.user?.name ?? 'Loading...' }}
+            </p>
+
+            <!-- Smaller Privacy Selector -->
+            <div class="relative inline-flex items-center">
+              <svg 
+                class="w-1.5 h-1.5 absolute top-0 right-0 m-3 pointer-events-none" 
+                xmlns="http://www.w3.org/2000/svg" 
+                viewBox="0 0 412 232"
+              >
+                <path 
+                  d="M206 171.144L42.678 7.822c-9.763-9.763-25.592-9.763-35.355 0-9.763 9.764-9.763 25.592 0 35.355l181 181c4.88 4.882 11.279 7.323 17.677 7.323s12.796-2.441 17.678-7.322l181-181c9.763-9.764 9.763-25.592 0-35.355-9.763-9.763-25.592-9.763-35.355 0L206 171.144z" 
+                  fill="#648299" 
+                  fill-rule="nonzero"
+                />
+              </svg>
+              <select 
+               v-model="data.privacy"
+                class="border border-gray-300 rounded-full text-gray-600 h-8 pl-4 pr-6 bg-white hover:border-gray-400 focus:outline-none appearance-none text-xs"
+              >
+                <option value="public" selected>Public</option>
+                <option value="friends">Friends</option>
+                <option value="only_me">Only Me</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+
+
+
+        <textarea
           v-model="data.content"
           placeholder="What's on your mind?"
-          class="flex-1 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 outline-none"
-        />
+          class="w-full min-h-24 mt-3 p-2 text-lg bg-transparent focus:outline-none focus:ring-0 resize-none overflow-auto scrollbar-hide"
+        ></textarea>
+
+
+
       </div>
 
       <!-- Image Preview (If Selected) -->
@@ -55,15 +120,15 @@
       </div>
 
 
-      <div class="flex items-center justify-between mt-3">
-        <!-- Dropdown Wrapper -->
+      <div class="flex items-center justify-end mt-3">
+        <!-- Dropdown Wrapper
         <div class="relative inline-flex">
           <svg class="w-2 h-2 absolute top-0 right-0 m-4 pointer-events-none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 412 232"><path d="M206 171.144L42.678 7.822c-9.763-9.763-25.592-9.763-35.355 0-9.763 9.764-9.763 25.592 0 35.355l181 181c4.88 4.882 11.279 7.323 17.677 7.323s12.796-2.441 17.678-7.322l181-181c9.763-9.764 9.763-25.592 0-35.355-9.763-9.763-25.592-9.763-35.355 0L206 171.144z" fill="#648299" fill-rule="nonzero"/></svg>
           <select class="border border-gray-300 rounded-full text-gray-600 h-10 pl-5 pr-10 bg-white hover:border-gray-400 focus:outline-none appearance-none">
             <option selected>Public</option>
             <option>Private</option>
           </select>
-        </div>
+        </div> -->
 
         <!-- Buttons -->
         <div class="flex items-center gap-2">
@@ -93,25 +158,21 @@
 
 <script setup>
 import { ref, defineEmits } from "vue";
-
 import axiosClient from '../axios';
-import { showToast } from '../utils/toast.js';
-import router from '../router.js';
+import  {useAuthStore} from '../store/auth.js';
+
+const authStore = useAuthStore();
 const data = ref({
   user_id: null, // Replace with the actual logged-in user ID
   content: "",
-  image: null
+  image: null,
+  privacy: "public", // Set the default value
 });
 const previewImage = ref(null);
 const isModalOpen = ref(false);
 const isDragging = ref(false);
 
-const user = ref({
-  id: 1,
-  firstname: "Leo",
-  lastname: "Odaya",
-  profile: "https://gratisography.com/wp-content/uploads/2024/11/gratisography-augmented-reality-800x525.jpg",
-});
+
 
 // Open/Close Modal
 const openModal = () => {
@@ -178,6 +239,7 @@ const submitPost = async () => {
 
   const formData = new FormData();
   formData.append("content", data.value.content);
+  formData.append("privacy", data.value.privacy);
 
   if (data.value.image) {
     formData.append("image", data.value.image);

@@ -40,7 +40,7 @@
             >
              
               <div class="flex items-center cursor-pointer">
-                <img :src="user.image ?? 'https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg'" class="w-10 h-10 rounded-full mr-3" />
+                <img :src="user.avatar ?? 'https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg'" class="w-10 h-10 rounded-full mr-3" />
 
                 <div>
                   <h3 class="font-bold">{{ user.name }}</h3>
@@ -50,9 +50,26 @@
                 </div>
               </div>
 
-              <button v-if="!user.is_friend" class="button bg-blue-600 text-white rounded p-2">Add friend</button>
-              <button v-if="user.is_friend" class="button bg-green-400 text-gray-950 rounded p-2 shadow-sm">Friends</button>
+              <!-- Friendship Actions -->
+              <button 
+                v-if="!user.friendship_status" 
+                @click="addFriend(user)" 
+                class="button bg-blue-600 text-white rounded p-2">
+                Add Friend
+              </button>
 
+              <button 
+                v-else-if="user.friendship_status === 'pending'" 
+                @click="cancelRequest(user)" 
+                class="button bg-yellow-400 text-gray-950 rounded p-2 shadow-sm">
+                Cancel Request
+              </button>
+
+              <button 
+                v-else-if="user.friendship_status === 'accepted'" 
+                class="button bg-green-400 text-gray-950 rounded p-2 shadow-sm">
+                Friends
+              </button>
             </li>
           </ul>
         </div>
@@ -80,6 +97,7 @@ import Newsfeed from "../components/Newsfeed.vue";
 import router from '../router.js';
 import { useRoute } from "vue-router";
 import axiosClient from "../axios.js";
+
 const route = useRoute(); // Get route information
 const searchQuery = ref(route.query.q || ""); // Get search query from URL
 
@@ -113,6 +131,32 @@ const fetchSearchResults = () => {
     //   });
   }
 };
+
+// ✅ Add Friend Request
+const addFriend = async (user) => {
+  try {
+    const response = await axiosClient.post('/api/friendship', { friend_id: user.id, status: 'pending' });
+    
+    // Update user status to "pending"
+    user.friendship_status = "pending";
+    console.log(response.data);
+  } catch (error) {
+    console.error("Error sending friend request:", error);
+  }
+};
+
+// ✅ Cancel Friend Request
+const cancelRequest = async (user) => {
+  try {
+    const response = await axiosClient.delete(`/api/friendship/${user.id}`);
+    user.friendship_status = null; // Update UI
+    console.log(response.data);
+  } catch (error) {
+    console.error("Error canceling friend request:", error);
+  }
+};
+
+
 
 // Fetch data when component mounts
 onMounted(fetchSearchResults);

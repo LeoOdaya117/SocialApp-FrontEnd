@@ -1,6 +1,6 @@
 <!-- src/components/FriendList.vue -->
 <template>
-  <div class="bg-white p-4 rounded-lg shadow">
+  <div class="bg-white p-4 rounded-lg shadow w-full">
     <h2 class="text-xl font-bold mb-4">Top 5 Users</h2>
     <ul>
       <li v-for="User in topUsers" :key="User.id" class="flex items-center mb-3 cursor-pointer hover:bg-gray-200 rounded-full">
@@ -23,12 +23,13 @@ import axiosClient from '../axios';
 const topUsers = ref([]);
 
 
-onMounted(()=>{
-      axiosClient.get('/api/topuser').then((Response)=>{
-        console.log(Response.data);
-        topUsers.value = Response.data;
-      });
-
-
-  });
+onMounted(async () => {
+  try {
+    const response = await axiosClient.get('/api/topuser');
+    console.log(response.data);
+    topUsers.value = response.data;
+  } catch (error) {
+    console.error('Error fetching top users:', error);
+  }
+});
 </script>

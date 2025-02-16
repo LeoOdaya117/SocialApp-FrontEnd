@@ -36,7 +36,7 @@
 
             <!-- Avatar Dropdown -->
             <div class="relative cursor-pointer" @click="toggleDropdown">
-              <img src="https://i.pravatar.cc/50?img=1" alt="Avatar" class="w-8 h-8 rounded-full" />
+              <img :src="authStore.user.avatar ? authStore.user.avatar : 'https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg'" alt="Avatar" class="w-8 h-8 rounded-full" />
               <ul v-if="showDropdown" class="absolute right-0 mt-2 w-40 bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden">
                 <li>
                   <router-link to="/profile" class="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">Profile</router-link>
@@ -75,6 +75,11 @@
 import { ref, onMounted, onBeforeUnmount } from "vue";
 import router from '../router.js';
 import axiosClient from '../axios';
+import  {useAuthStore} from '../store/auth.js';
+
+const authStore = useAuthStore();
+
+
 
 const searchQuery = ref("");
 const showNotifications = ref(false);
@@ -109,6 +114,7 @@ const closeDropdowns = (event) => {
 
 onMounted(() => {
   document.addEventListener("click", closeDropdowns);
+  
 });
 
 onBeforeUnmount(() => {

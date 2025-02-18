@@ -5,7 +5,9 @@ import { HandThumbUpIcon, ChatBubbleBottomCenterTextIcon, ArrowPathRoundedSquare
 import axiosClient from "../axios";
 import echo from '../plugins/echo'; // Import Echo instance
 import { useRoute } from "vue-router";
+import  {useAuthStore} from '../store/auth.js';
 
+const authStore = useAuthStore();
 const route = useRoute(); // Get route information
 const searchQuery = ref(route.query.q || ""); // Get search query from URL
 
@@ -143,7 +145,7 @@ const closeImageModal = () => {
             </div>
             <hr class="mb-2">
             <div class="flex items-center space-x-2">
-                <img :src="user.profile" alt="Avatar" class="w-10 h-10 rounded-full border border-gray-300" />
+                <img :src="authStore.user.avatar ?? 'https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg'" alt="Avatar" class="w-10 h-10 rounded-full border border-gray-300" />
                 <input placeholder="Write a comment..." class="flex-1 p-1 border border-gray-300 rounded-full bg-gray-100 cursor-pointer" />
             </div>
         </div>

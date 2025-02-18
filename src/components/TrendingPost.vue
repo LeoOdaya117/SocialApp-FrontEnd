@@ -7,7 +7,7 @@
     <ul v-else class="w-full">
      
       
-      <li v-for="post in trendingPost" :key="post.id" class="flex items-center mb-2  hover:bg-gray-200 rounded cursor-pointer">
+      <li v-for="post in trendingPost" :key="post.id" @click="router.push({ path: '/search', query: { q: post.content } })" class="flex items-center mb-2  hover:bg-gray-200 rounded cursor-pointer">
         
         <img :src="post.user.avatar ??  'https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg'" alt="Avatar" class="w-10 h-10 rounded-full mr-3" />
         <div>
@@ -24,6 +24,7 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import axiosClient from "../axios";
+import router from "../router";
 
 const trendingPost = ref([]);
 
